@@ -16,8 +16,8 @@ class Check172 {
         $this->checkData();
         $this->checkActive();
         $this->makeString();
-       // echo $this->error_string;
-      //  $this->sendMail();
+       //echo $this->error_string;
+       $this->sendMail();
     }
     
     private function checkData() {
@@ -49,16 +49,30 @@ class Check172 {
     
     private function makeString() {
         foreach ($this->error_arr as $data) {
-            $this->error_string.= $data['lastname']." ".$data['firstname']." - ".$data['organization']." (".$data['jobtitle'].")"."\n\r";
+            $this->error_string.= $data['lastname']." ".$data['firstname']." - ".$data['organization']." (".$data['jobtitle'].")"." - ".$data['status_user']."\n\r";
         }
     }
     
     private function checkActive() {
         $mysqli2 = new mysqli($this->host_projecto, $this->db_user_projecto, $this->db_pass_projecto, $this->db_name_projecto);
         foreach ($this->error_arr as $uid => $data) {
-            $ch = $mysqli2->query("SELECT login FROM users WHERE craddav_uid = '".$uid."'");
-            $uid_arr = $ch->fetch_row();
-            var_dump($uid_arr); 
+            $ch2 = $mysqli2->query("SELECT status, id FROM users WHERE users.carddav_uid = '".$uid."'") OR die(mysqli_error($mysqli2));
+            $uid_arr2 = $ch2->fetch_assoc();
+            if (!empty($uid_arr2)) {
+                if ($uid_arr2['status'] != 0) {
+                    $this->error_arr[$uid]['status_user'] = 'Не активен в PROJECTO'; 
+                } else {
+                    $ch3 = $mysqli2->query("SELECT type FROM vacations WHERE user_id = '".$uid_arr2['id']."' AND time_end > NOW()") OR die(mysqli_error($mysqli2));
+                    $voc = $ch3->fetch_assoc();
+                    if (!empty($voc) AND $voc['type'] == 4) {
+                        $this->error_arr[$uid]['status_user'] = 'В декрете'; 
+                    } else {
+                        $this->error_arr[$uid]['status_user'] = 'Активен в PROJECTO'; 
+                    }
+                }
+            } else {
+               $this->error_arr[$uid]['status_user'] = 'Нет в PROJECTO'; 
+            }
         }
     }
 }
