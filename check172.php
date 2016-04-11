@@ -42,8 +42,10 @@ class Check172 {
                    'X-Mailer: PHP/' . phpversion();
         $subject = "Error 172 server";
     
-        foreach ($this->mail_tos as $mail) {
-            mail($mail, $subject, $this->error_string, $headers);
+        if (!empty($this->error_string)) {
+            foreach ($this->mail_tos as $mail) {
+                mail($mail, $subject, $this->error_string, $headers);
+            }
         }
     }
     
