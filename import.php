@@ -49,7 +49,7 @@ class convertToOwncloud
                 $vcard .= "\nFN:" . $data['lastname'] . " " . $data['firstname'] . " " . $data['firstname2'];
                 $vcard .= "\nORG:" . $data['organization'];
                 $vcard .= "\nTITLE:" . $data['jobtitle'] . " (" . $data['department'] . ")";
-                if (!empty($data['work_phones']) AND !$data['dismissal_date'] AND !$data['decret']) {
+                if (!empty($data['work_phones']) AND !$data['dismissal_date']) {
                     $vcard .= $this->getPhones($data['work_phones'], self::WORK_PHONES);
                 }
                 if (!empty($data['cell_phones'])) {
@@ -59,7 +59,7 @@ class convertToOwncloud
                     $vcard .= $this->getPhones($data['private_phones'], self::HOME_PHONES);
                 }
 
-                if (!empty($data['work_emails']) AND !$data['dismissal_date'] AND !$data['decret']) {
+                if (!empty($data['work_emails']) AND !$data['dismissal_date']) {
                     $vcard .= $this->getEmails($data['work_emails'], self::WORK_EMAILS);
                 }
                 
@@ -94,6 +94,7 @@ class convertToOwncloud
                }  else {
 
                 }
+                /*
                 if ($data['dismissal_date']) {
                     $group_choice['dissmised'][] = $data['uid'];
                 } elseif ($data['decret']) {
@@ -101,6 +102,7 @@ class convertToOwncloud
                 } else {
                     $group_choice['emploers'][] = $data['uid'];
                 }
+                */
             }
             //$this->makeGroups($group_choice);
             $this->addCorpNumbers(1);
