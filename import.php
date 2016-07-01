@@ -80,9 +80,20 @@ class convertToOwncloud
                 $vcard .= "\nPHOTO:data:image/jpeg;base64," . $photo;
                 $vcard .= "\nEND:VCARD";
 
-                if (!$data['dismissal_date'] AND !$data['decret']) {
-                $this->writeDb($data, $vcard, 1);
-               }
+                $decret = FALSE;
+                if (!empty($data['decret_start']) AND !empty($data['decret_end'])) {
+                     $start = date_timestamp_get(date_create_from_format('Y-m-d', $data['decret_start']));
+                     $end = date_timestamp_get(date_create_from_format('Y-m-d', $data['decret_end']));
+                    if (time() > $start AND time() < $end) {
+                        $decret = TRUE;
+                    }
+                }
+
+                if (!$data['dismissal_date'] OR $decret) {
+                    $this->writeDb($data, $vcard, 1);
+               }  else {
+
+                }
                 if ($data['dismissal_date']) {
                     $group_choice['dissmised'][] = $data['uid'];
                 } elseif ($data['decret']) {
@@ -184,13 +195,21 @@ class convertToOwncloud
         $mysqli2->query("DELETE FROM oc_cards WHERE uri = '" . $uri . "' AND addressbookid = 1");
 
     
-   $mysqli2->query("DELETE FROM oc_addressbookchanges  WHERE uri = '" . $uri . "' AND addressbookid = 1") OR die(mysqli_error($mysqli2));
-//$mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".time().", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
+         $mysqli2->query("DELETE FROM oc_addressbookchanges  WHERE uri = '" . $uri . "' AND addressbookid = 1") OR die(mysqli_error($mysqli2));
+        //$mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".time().", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
 
-    $mysqli2->query("INSERT INTO oc_cards (`addressbookid` ,`carddata`,`uri` ,`lastmodified`, `etag`) VALUES (".$book.", '" . $card . "', '" . $uri . "', " . (time()+1) . ", '" . md5(time()) . "')") OR die(mysqli_error($mysqli2));
-      
- $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
-       $mysqli2->close();
+        $mysqli2->query("INSERT INTO oc_cards (`addressbookid` ,`carddata`,`uri` ,`lastmodified`, `etag`) VALUES (".$book.", '" . $card . "', '" . $uri . "', " . (time()+1) . ", '" . md5(time()) . "')") OR die(mysqli_error($mysqli2));
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
+        $mysqli2->close();
+    }
+
+    private function deleteDb($data, $book) {
+        $mysqli2 = new mysqli($this->host_carddav, $this->db_user_carddav, $this->db_pass_carddav, $this->db_name_carddav);
+        $mysqli2->query("SET NAMES utf8");
+        $uri = $data['uid'] . ".vcf";
+        $mysqli2->query("DELETE FROM oc_cards WHERE uri = '" . $uri . "' AND addressbookid = 1");
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 2)") OR die(mysqli_error($mysqli2));
+        $mysqli2->close();
     }
 
     /**
