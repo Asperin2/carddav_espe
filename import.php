@@ -86,10 +86,11 @@ class convertToOwncloud
                      $end = date_timestamp_get(date_create_from_format('Y-m-d', $data['decret_end']));
                     if (time() > $start AND time() < $end) {
                         $decret = TRUE;
+                        echo $data['lastname'];
                     }
                 }
 
-                if (!$data['dismissal_date'] OR $decret) {
+                if (!$data['dismissal_date'] OR !$decret) {
                     $this->writeDb($data, $vcard, 1);
                }  else {
 
