@@ -90,7 +90,7 @@ class convertToOwncloud
                     }
                 }
 
-                if (!$data['dismissal_date'] OR !$decret) {
+                if (!$data['dismissal_date'] AND !$decret) {
                     $this->writeDb($data, $vcard, 1);
                }  else {
 
