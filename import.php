@@ -203,6 +203,7 @@ class convertToOwncloud
         //$mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".time().", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
 
         $mysqli2->query("INSERT INTO oc_cards (`addressbookid` ,`carddata`,`uri` ,`lastmodified`, `etag`) VALUES (".$book.", '" . $card . "', '" . $uri . "', " . (time()+1) . ", '" . md5(time()) . "')") OR die(mysqli_error($mysqli2));
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 3)") OR die(mysqli_error($mysqli2));
         $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
         $mysqli2->close();
     }
