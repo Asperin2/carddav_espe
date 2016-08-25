@@ -204,8 +204,8 @@ class convertToOwncloud
         //$mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".time().", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
 
         $mysqli2->query("INSERT INTO oc_cards (`addressbookid` ,`carddata`,`uri` ,`lastmodified`, `etag`) VALUES (".$book.", '" . $card . "', '" . $uri . "', " . (time()+1) . ", '" . md5(time()) . "')") OR die(mysqli_error($mysqli2));
-        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(2).", '" . $uri . "', 3)") OR die(mysqli_error($mysqli2));
-        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(3).", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(microtime(true)*1000).", '" . $uri . "', 3)") OR die(mysqli_error($mysqli2));
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(microtime(true)*1000+1).", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
         $mysqli2->close();
     }
 
@@ -214,7 +214,7 @@ class convertToOwncloud
         $mysqli2->query("SET NAMES utf8");
         $uri = $data['uid'] . ".vcf";
         $mysqli2->query("DELETE FROM oc_cards WHERE uri = '" . $uri . "' AND addressbookid = 1");
-        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(time()+2).", '" . $uri . "', 2)") OR die(mysqli_error($mysqli2));
+        $mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".(microtime(true)*1000+2).", '" . $uri . "', 2)") OR die(mysqli_error($mysqli2));
         $mysqli2->close();
     }
 
@@ -224,7 +224,7 @@ class convertToOwncloud
     private function syncDone()
     {
         $mysqli2 = new mysqli($this->host_carddav, $this->db_user_carddav, $this->db_pass_carddav, $this->db_name_carddav);
-        $mysqli2->query("UPDATE `oc_addressbooks` SET `synctoken` = " . (time()+3) . " WHERE `id` =1 LIMIT 1 ");
+        $mysqli2->query("UPDATE `oc_addressbooks` SET `synctoken` = " . (microtime(true)*1000+3) . " WHERE `id` =1 LIMIT 1 ");
     }
 
     /**
