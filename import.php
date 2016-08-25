@@ -50,6 +50,7 @@ class convertToOwncloud
                 $vcard .= "\nFN:" . $data['lastname'] . " " . $data['firstname'] . " " . $data['firstname2'];
                 $vcard .= "\nORG:" . $data['organization'];
                 $vcard .= "\nTITLE:" . $data['jobtitle'] . " (" . $data['department'] . ")";
+                $vcard .= "\nNOTE:" . $data['jobtitle'] . " (" . $data['department'] . ")";
                 if (!empty($data['work_phones']) AND !$data['dismissal_date']) {
                     $vcard .= $this->getPhones($data['work_phones'], self::WORK_PHONES);
                 }
