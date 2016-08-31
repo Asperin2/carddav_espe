@@ -331,7 +331,7 @@ foreach ($this->groups as $group => $group_name) {
     public function getLastToken($table) {
         $mysqli2 = new mysqli($this->host_carddav, $this->db_user_carddav, $this->db_pass_carddav, $this->db_name_carddav);
         $result = $mysqli2->query("SELECT MAX(synctoken) FROM ".$table." LIMIT 1");
-        return $result->fetch_field();
+        return $result->fetch_row();
 
     }
 
@@ -340,4 +340,5 @@ foreach ($this->groups as $group => $group_name) {
 
 error_reporting(E_ALL);
 $obj = new convertToOwncloud;
-echo $obj->getLastToken('oc_adressbooks') . "\r\n\r\n";
+$t = $obj->getLastToken('oc_adressbooks');
+var_dump($t);
