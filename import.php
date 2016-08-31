@@ -38,8 +38,6 @@ class convertToOwncloud
         $group_choice = array();
         date_default_timezone_set("Europe/Moscow");
         $mysqli2 = new mysqli($this->host_carddav, $this->db_user_carddav, $this->db_pass_carddav, $this->db_name_carddav);
-        $mysqli2->query("DELETE FROM oc_cards WHERE 1 = 1");
-        $mysqli2->query("DELETE FROM oc_addressbookchanges WHERE 1 = 1");
         $mysqli = new mysqli($this->host, $this->db_user, $this->db_pass, $this->db_name);
         if ($result = $mysqli->query("SELECT * FROM addressbook ad INNER JOIN user_add_info ui ON ad.uid = ui.uid")) {
             while ($data = $result->fetch_assoc()) {
@@ -200,7 +198,7 @@ class convertToOwncloud
         $mysqli2->query("DELETE FROM oc_cards WHERE uri = '" . $uri . "' AND addressbookid = 1");
 
     
-         $mysqli2->query("DELETE FROM oc_addressbookchanges  WHERE uri = '" . $uri . "' AND addressbookid = 1") OR die(mysqli_error($mysqli2));
+        // $mysqli2->query("DELETE FROM oc_addressbookchanges  WHERE uri = '" . $uri . "' AND addressbookid = 1") OR die(mysqli_error($mysqli2));
         //$mysqli2->query("INSERT INTO oc_addressbookchanges (addressbookid ,synctoken,uri ,operation) VALUES (".$book.", ".time().", '" . $uri . "', 1)") OR die(mysqli_error($mysqli2));
 
         $mysqli2->query("INSERT INTO oc_cards (`addressbookid` ,`carddata`,`uri` ,`lastmodified`, `etag`) VALUES (".$book.", '" . $card . "', '" . $uri . "', " . (time()+1) . ", '" . md5(time()) . "')") OR die(mysqli_error($mysqli2));
