@@ -331,7 +331,7 @@ foreach ($this->groups as $group => $group_name) {
     public function getLastToken($table) {
         $mysqli2 = new mysqli($this->host_carddav, $this->db_user_carddav, $this->db_pass_carddav, $this->db_name_carddav);
         $result = $mysqli2->query("SELECT MAX(synctoken) FROM ".$table." LIMIT 1");
-        return $result->fetch_row();
+        return $result;
 
     }
 
